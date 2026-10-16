@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="E-Flyer Sekolah: buat flyer promosi penerimaan siswa baru atau kegiatan sekolah, lengkap dengan logo, gambar latar, musik, video, dan caption.">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>E-Flyer Sekolah</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: tool workspace — form column on the left, sticky flyer stage on the right; stacks on phones */
+:root{
+  --bg:#EEF3F1; --surface:#FFFFFF; --sunk:#F6F9F8; --ink:#13231F; --muted:#5A6B66; --line:#D5DFDB;
+  --accent:#0E6B57; --accent-ink:#FFFFFF; --mark:#E3A21A; --danger:#B3261E;
+  --display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --body:"Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1614; --surface:#16211E; --sunk:#111A18; --ink:#E5EEEB; --muted:#93A39E; --line:#2A3833;
+  --accent:#3DBE9C; --accent-ink:#06231C; --mark:#F0B647; --danger:#F2867D; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1614; --surface:#16211E; --sunk:#111A18; --ink:#E5EEEB; --muted:#93A39E; --line:#2A3833;
+  --accent:#3DBE9C; --accent-ink:#06231C; --mark:#F0B647; --danger:#F2867D; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+.wrap{max-width:1280px;margin:0 auto;display:grid;gap:20px}
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px;padding-bottom:4px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,40px);line-height:1.05;margin:0;letter-spacing:-.01em;text-wrap:balance}
+h1 span{color:var(--accent)}
+.lede{margin:6px 0 0;color:var(--muted);max-width:62ch}
+.sample{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mark);border:1px solid currentColor;border-radius:999px;padding:3px 10px;white-space:nowrap}
+.grid{display:grid;gap:20px;grid-template-columns:1fr}
+@media (min-width:980px){.grid{grid-template-columns:minmax(380px,460px) 1fr;align-items:start}.stagecol{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px)}}
+form{display:grid;gap:14px;min-width:0}
+details.sec{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+details.sec>summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:10px;padding:14px 16px;font-family:var(--display);font-weight:700;font-size:18px}
+details.sec>summary::-webkit-details-marker{display:none}
+details.sec>summary .n{font-family:var(--body);font-size:12px;font-weight:800;color:var(--accent);letter-spacing:.08em}
+details.sec>summary .hint{margin-left:auto;font-family:var(--body);font-size:12px;font-weight:500;color:var(--muted)}
+details.sec[open]>summary{border-bottom:1px solid var(--line)}
+.body{padding:14px 16px 16px;display:grid;gap:12px}
+.row{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+label.f{display:grid;gap:5px;font-size:13px;font-weight:600;min-width:0}
+label.f small{font-weight:500;color:var(--muted)}
+input[type=text],input[type=date],input[type=url],input[type=email],select,textarea{
+  width:100%;font:inherit;font-size:14px;color:var(--ink);background:var(--sunk);border:1px solid var(--line);border-radius:9px;padding:9px 11px}
+textarea{resize:vertical;min-height:84px}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,summary:focus-visible,.choice input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.choice{position:relative;display:block;cursor:pointer}
+.choice input{position:absolute;opacity:0;inset:0}
+.choice span{display:grid;gap:3px;height:100%;padding:12px;border:1.5px solid var(--line);border-radius:12px;background:var(--sunk)}
+.choice b{font-size:14px}
+.choice em{font-style:normal;font-size:12px;color:var(--muted)}
+.choice input:checked+span{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
+.file{display:grid;gap:6px;font-size:13px;font-weight:600}
+.file input{font-size:13px;color:var(--muted)}
+.swatches{display:flex;flex-wrap:wrap;gap:8px}
+.sw{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 10px 5px 6px;font:inherit;font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.sw i{width:18px;height:18px;border-radius:50%;display:inline-block;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.colors{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;font-weight:600}
+.colors label{display:flex;align-items:center;gap:8px}
+input[type=color]{width:42px;height:32px;border:1px solid var(--line);border-radius:8px;background:var(--sunk);padding:2px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.gen{position:sticky;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);display:grid;gap:6px;z-index:2}
+button{font:inherit;cursor:pointer}
+.btn{border:0;border-radius:12px;padding:12px 16px;font-weight:700;font-size:15px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn.primary{background:var(--accent);color:var(--accent-ink);font-family:var(--display);font-size:18px;padding:14px 18px;box-shadow:0 8px 24px -10px color-mix(in srgb,var(--accent) 70%,transparent)}
+.btn.ghost{background:var(--surface);color:var(--ink);border:1.5px solid var(--line)}
+.btn:disabled{opacity:.55;cursor:progress}
+.msg{font-size:13px;color:var(--danger);min-height:1em;margin:0}
+.stagecol{display:grid;gap:14px;min-width:0}
+.stagecard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;display:grid;gap:14px}
+.stagehead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px}
+.stagehead h2{font-family:var(--display);font-size:20px;margin:0}
+.dims{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.stage{margin:0 auto;width:100%;background:repeating-conic-gradient(var(--sunk) 0 25%,var(--bg) 0 50%) 0 0/20px 20px;border-radius:10px;overflow:hidden}
+canvas#cv{display:block;width:100%;height:auto}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+.actions .btn{flex:1 1 180px}
+.status{font-size:13px;color:var(--muted);margin:0}
+.out{display:grid;gap:10px}
+.out img,.out video{width:100%;max-height:70vh;object-fit:contain;border-radius:10px;background:var(--sunk);display:block}
+.note{font-size:13px;color:var(--muted);margin:0}
+.caption textarea{min-height:150px;font-size:13px}
+.capbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.capbar h3{margin:0;font-family:var(--display);font-size:17px}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>E-Flyer <span>Sekolah</span></h1>
+      <p class="lede">Isi identitas sekolah, pilih tujuan flyer, tambahkan logo, gambar latar, dan musik. Tekan <b>Buat Flyer</b> untuk melihat desainnya, lalu simpan sebagai gambar atau video.</p>
+    </div>
+    <span class="sample" id="sampleTag">Berisi data contoh</span>
+  </header>
+
+  <div class="grid">
+    <form id="form" autocomplete="off">
+      <details class="sec" open>
+        <summary><span class="n">1</span>Identitas sekolah<span class="hint">sesuai data Dapodik/dinas</span></summary>
+        <div class="body">
+          <label class="f">Nama sekolah *<input type="text" id="nama" value="SD Islam Terpadu Cahaya Ilmu"></label>
+          <div class="row">
+            <label class="f">NPSN<input type="text" id="npsn" inputmode="numeric" maxlength="8" value="20212345"></label>
+            <label class="f">Jenjang
+              <select id="jenjang"><option>TK/KB</option><option selected>SD/MI</option><option>SMP/MTs</option><option>SMA/MA</option><option>SMK</option></select></label>
+          </div>
+          <div class="row">
+            <label class="f">Status<select id="status"><option>Negeri</option><option selected>Swasta</option></select></label>
+            <label class="f">Akreditasi<select id="akreditasi"><option value="">(tidak ditampilkan)</option><option selected>A (Unggul)</option><option>B (Baik)</option><option>C (Cukup)</option><option>Unggul</option><option>Baik Sekali</option><option>Baik</option></select></label>
+          </div>
+          <label class="f">Nama yayasan <small>(khusus swasta, opsional)</small><input type="text" id="yayasan" value="Yayasan Cahaya Ilmu"></label>
+          <label class="f">Alamat (jalan, nomor, RT/RW)<input type="text" id="alamat" value="Jl. Melati No. 12, RT 03/RW 05"></label>
+          <div class="row">
+            <label class="f">Kelurahan/Desa<input type="text" id="kelurahan" value="Tugu"></label>
+            <label class="f">Kecamatan<input type="text" id="kecamatan" value="Cimanggis"></label>
+          </div>
+          <div class="row">
+            <label class="f">Kabupaten/Kota<input type="text" id="kabkota" value="Kota Depok"></label>
+            <label class="f">Provinsi<input type="text" id="provinsi" value="Jawa Barat"></label>
+            <label class="f">Kode pos<input type="text" id="kodepos" inputmode="numeric" maxlength="5" value="16451"></label>
+          </div>
+          <div class="row">
+            <label class="f">Telepon<input type="text" id="telepon" value="(021) 8700 1234"></label>
+            <label class="f">WhatsApp panitia/admin<input type="text" id="wa" value="0812 3456 7890"></label>
+          </div>
+          <div class="row">
+            <label class="f">Email<input type="email" id="email" value="info@cahayailmu.sch.id"></label>
+            <label class="f">Website<input type="text" id="website" value="cahayailmu.sch.id"></label>
+          </div>
+          <div class="row">
+            <label class="f">Instagram<input type="text" id="instagram" value="@sditcahayailmu"></label>
+            <label class="f">Kepala sekolah<input type="text" id="kepsek" value="Siti Rahmawati, S.Pd."></label>
+          </div>
+        </div>
+      </details>
+
+      <details class="sec" open>
+        <summary><span class="n">2</span>Tujuan flyer</summary>
+        <div class="body">
+          <div class="choices" role="radiogroup" aria-label="Tujuan flyer">
+            <label class="choice"><input type="radio" name="tujuan" id="tujuanPpsb" value="ppsb" checked><span><b>Penerimaan siswa baru</b><em>Menjaring calon murid (SPMB/PPDB/PPSB)</em></span></label>
+            <label class="choice"><input type="radio" name="tujuan" id="tujuanKeg" value="kegiatan"><span><b>Promosi kegiatan</b><em>Mengenalkan acara sekolah ke masyarakat</em></span></label>
+          </div>
+
+          <div id="grpPpsb" class="body" style="padding:0">
+            <div class="row">
+              <label class="f">Istilah<select id="istilah"><option value="SPMB" selected>SPMB</option><option value="PPDB">PPDB</option><option value="PPSB">PPSB</option></select></label>
+              <label class="f">Tahun ajaran<input type="text" id="ta" value="2027/2028"></label>
+              <label class="f">Gelombang<input type="text" id="gelombang" value="Gelombang 1"></label>
+            </div>
+            <div class="row">
+              <label class="f">Pendaftaran dibuka<input type="date" id="mulai" value="2026-11-01"></label>
+              <label class="f">Pendaftaran ditutup<input type="date" id="selesai" value="2027-01-31"></label>
+            </div>
+            <label class="f">Judul utama <small>(kosongkan untuk judul otomatis)</small><input type="text" id="judulPpsb" value="Tumbuh Cerdas, Berakhlak, dan Bahagia"></label>
+            <label class="f">Keunggulan sekolah <small>(satu per baris, maks. 5)</small>
+              <textarea id="keunggulan">Program tahfidz Al-Qur'an 2 juz
+Kelas maksimal 24 siswa
+Pembelajaran berbasis proyek
+Ekstrakurikuler robotik dan pencak silat
+Laporan perkembangan anak setiap bulan</textarea></label>
+            <div class="row">
+              <label class="f">Info biaya <small>(opsional)</small><input type="text" id="biaya" value="Cicilan uang pangkal tersedia"></label>
+              <label class="f">Link pendaftaran<input type="text" id="link" value="bit.ly/daftar-cahayailmu"></label>
+            </div>
+          </div>
+
+          <div id="grpKeg" class="body" style="padding:0" hidden>
+            <label class="f">Nama kegiatan *<input type="text" id="kegNama" value="Pentas Seni dan Bazar Akhir Tahun"></label>
+            <div class="row">
+              <label class="f">Tanggal<input type="date" id="kegTgl" value="2026-12-13"></label>
+              <label class="f">Waktu<input type="text" id="kegWaktu" value="08.00–13.00 WIB"></label>
+            </div>
+            <label class="f">Tempat<input type="text" id="kegTempat" value="Lapangan sekolah"></label>
+            <label class="f">Deskripsi singkat<textarea id="kegDesk">Penampilan tari, musik, dan drama dari seluruh kelas, pameran karya proyek siswa, serta bazar makanan UMKM orang tua murid.</textarea></label>
+            <label class="f">Ajakan <small>(muncul di tombol bawah)</small><input type="text" id="kegAjak" value="Terbuka untuk umum, gratis"></label>
+          </div>
+        </div>
+      </details>
+
+      <details class="sec" open>
+        <summary><span class="n">3</span>Logo, gambar latar &amp; musik</summary>
+        <div class="body">
+          <div class="row">
+            <label class="file">Logo sekolah <input type="file" id="logoFile" accept="image/*"></label>
+            <label class="file">Gambar latar <input type="file" id="bgFile" accept="image/*"></label>
+          </div>
+          <p class="note">Tanpa logo, flyer memakai inisial sekolah. Tanpa gambar latar, flyer memakai pola warna tema. Foto kegiatan asli paling meyakinkan.</p>
+          <div class="row">
+            <label class="f">Backsound
+              <select id="audioSrc"><option value="bawaan" selected>Musik ceria bawaan</option><option value="upload">Unggah file sendiri</option><option value="none">Tanpa suara</option></select></label>
+            <label class="f">Durasi video<select id="durasi"><option value="8">8 detik</option><option value="10" selected>10 detik</option><option value="15">15 detik</option></select></label>
+          </div>
+          <label class="file" id="audioWrap" hidden>File musik (mp3/wav/m4a) <input type="file" id="audioFile" accept="audio/*"></label>
+          <p class="note">Gunakan musik bebas royalti atau milik sendiri agar aman diunggah ke media sosial.</p>
+        </div>
+      </details>
+
+      <details class="sec" open>
+        <summary><span class="n">4</span>Tampilan</summary>
+        <div class="body">
+          <div class="row">
+            <label class="f">Ukuran
+              <select id="format"><option value="feed">Feed Instagram 1:1</option><option value="story" selected>Story/Reels/WA 9:16</option><option value="a4">Poster A4 (cetak)</option></select></label>
+            <label class="f">Gaya
+              <select id="gaya"><option value="panel">Kartu putih</option><option value="gelap">Teks di atas foto</option></select></label>
+          </div>
+          <div class="f" style="display:grid;gap:8px;font-size:13px;font-weight:600">Warna tema
+            <div class="swatches" id="swatches"></div>
+            <div class="colors">
+              <label>Utama <input type="color" id="warnaUtama" value="#0E5E4E"></label>
+              <label>Aksen <input type="color" id="warnaAksen" value="#F2B33D"></label>
+            </div>
+          </div>
+          <label class="f">Kegelapan lapisan di atas gambar <small id="ovVal">70%</small><input type="range" id="overlay" min="0" max="100" value="70"></label>
+        </div>
+      </details>
+
+      <div class="gen">
+        <button type="submit" class="btn primary" id="genBtn">Buat Flyer</button>
+        <p class="msg" id="msg" role="status"></p>
+      </div>
+    </form>
+
+    <section class="stagecol" aria-label="Pratinjau">
+      <div class="stagecard">
+        <div class="stagehead"><h2>Pratinjau</h2><span class="dims" id="dims"></span></div>
+        <div class="stage" id="stage"><canvas id="cv" width="1080" height="1920" aria-label="Pratinjau desain e-flyer"></canvas></div>
+        <div class="actions">
+          <button type="button" class="btn ghost" id="playBtn">Putar animasi + suara</button>
+          <button type="button" class="btn ghost" id="pngBtn">Simpan sebagai gambar</button>
+          <button type="button" class="btn ghost" id="vidBtn">Buat video</button>
+        </div>
+        <p class="status" id="status"></p>
+        <div class="out" id="out" hidden>
+          <img id="pngOut" alt="Hasil e-flyer sebagai gambar" hidden>
+          <video id="vidOut" controls playsinline hidden></video>
+          <p class="note" id="saveNote"></p>
+        </div>
+      </div>
+
+      <div class="stagecard caption">
+        <div class="capbar"><h3>Caption untuk media sosial</h3><button type="button" class="btn ghost" id="copyBtn" style="padding:8px 14px;font-size:14px">Salin caption</button></div>
+        <textarea id="caption" aria-label="Caption media sosial"></textarea>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+(() => {
+const $ = id => document.getElementById(id);
+const cv = $('cv'), ctx = cv.getContext('2d');
+const FORMATS = {feed:[1080,1080,'1080 × 1080 px'], story:[1080,1920,'1080 × 1920 px'], a4:[1240,1754,'A4 · 1240 × 1754 px']};
+const PRESETS = [['Hijau','#0E5E4E','#F2B33D'],['Biru','#1D3F8F','#F5C242'],['Merah','#A61E22','#FFD166'],['Ungu','#4B2A7B','#FF9F43'],['Toska','#0B6E80','#FFB4A2'],['Cokelat','#6B3E26','#F2C14E']];
+let logoImg = null, bgImg = null, audioURL = null, L = null, anim = null;
+
+/* ---------- form wiring ---------- */
+const sw = $('swatches');
+PRESETS.forEach(([n,p,a]) => {
+  const b = document.createElement('button'); b.type='button'; b.className='sw';
+  b.innerHTML = `<i style="background:linear-gradient(135deg,${p} 55%,${a} 55%)"></i>${n}`;
+  b.onclick = () => { $('warnaUtama').value=p; $('warnaAksen').value=a; save(); generate(); };
+  sw.appendChild(b);
+});
+function syncTujuan(){ const k = $('tujuanKeg').checked; $('grpKeg').hidden=!k; $('grpPpsb').hidden=k; }
+document.querySelectorAll('input[name=tujuan]').forEach(r => r.addEventListener('change', () => { syncTujuan(); generate(); }));
+$('audioSrc').addEventListener('change', () => { $('audioWrap').hidden = $('audioSrc').value!=='upload'; });
+$('overlay').addEventListener('input', () => { $('ovVal').textContent = $('overlay').value+'%'; });
+['format','gaya','overlay','warnaUtama','warnaAksen'].forEach(id => $(id).addEventListener('change', generate));
+
+function loadImage(file){ return new Promise((res,rej) => { const r=new FileReader(); r.onload=()=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=r.result; }; r.onerror=rej; r.readAsDataURL(file); }); }
+$('logoFile').addEventListener('change', async e => { const f=e.target.files[0]; if(!f) return; try{ logoImg=await loadImage(f); generate(); }catch(_){ setMsg('Logo tidak bisa dibaca. Coba file PNG atau JPG.'); } });
+$('bgFile').addEventListener('change', async e => { const f=e.target.files[0]; if(!f) return; try{ bgImg=await loadImage(f); generate(); }catch(_){ setMsg('Gambar latar tidak bisa dibaca. Coba file JPG atau PNG.'); } });
+$('audioFile').addEventListener('change', e => { const f=e.target.files[0]; if(!f) return; if(audioURL) URL.revokeObjectURL(audioURL); audioURL=URL.createObjectURL(f); setStatus('Musik "'+f.name+'" siap dipakai.'); });
+
+/* draft (per browser, optional) */
+const KEYS = ['nama','npsn','jenjang','status','akreditasi','yayasan','alamat','kelurahan','kecamatan','kabkota','provinsi','kodepos','telepon','wa','email','website','instagram','kepsek','istilah','ta','gelombang','mulai','selesai','judulPpsb','keunggulan','biaya','link','kegNama','kegTgl','kegWaktu','kegTempat','kegDesk','kegAjak','audioSrc','durasi','format','gaya','warnaUtama','warnaAksen','overlay'];
+let saveT;
+function save(){ clearTimeout(saveT); saveT=setTimeout(() => { try{ const o={}; KEYS.forEach(k=>o[k]=$(k).value); o.tujuan=$('tujuanKeg').checked?'kegiatan':'ppsb'; localStorage.setItem('eflyer-draft',JSON.stringify(o)); }catch(_){} }, 400); }
+function restore(){ try{ const o=JSON.parse(localStorage.getItem('eflyer-draft')||'null'); if(!o) return; KEYS.forEach(k=>{ if(o[k]!=null) $(k).value=o[k]; }); if(o.tujuan==='kegiatan') $('tujuanKeg').checked=true; $('sampleTag').textContent='Draf tersimpan di peramban ini'; }catch(_){} }
+$('form').addEventListener('input', () => { save(); $('sampleTag').hidden = true; });
+
+/* ---------- data ---------- */
+const v = id => ($(id).value||'').trim();
+function fmtDate(s, short){ if(!s) return ''; const d=new Date(s+'T00:00:00'); if(isNaN(d)) return ''; return d.toLocaleDateString('id-ID',{day:'numeric',month:short?'short':'long',year:'numeric'}); }
+function range(a,b){ if(a&&b) return fmtDate(a,true)+' – '+fmtDate(b,true); return fmtDate(a||b,false); }
+function getData(){
+  return {
+    nama:v('nama'), npsn:v('npsn'), jenjang:v('jenjang'), status:v('status'), akreditasi:v('akreditasi'), yayasan:v('yayasan'),
+    alamat:v('alamat'), kel:v('kelurahan'), kec:v('kecamatan'), kab:v('kabkota'), prov:v('provinsi'), kodepos:v('kodepos'),
+    telp:v('telepon'), wa:v('wa'), email:v('email'), web:v('website'), ig:v('instagram'), kepsek:v('kepsek'),
+    tujuan:$('tujuanKeg').checked?'kegiatan':'ppsb', istilah:v('istilah'), ta:v('ta'), gel:v('gelombang'), mulai:$('mulai').value, selesai:$('selesai').value,
+    judul:v('judulPpsb'), unggul:v('keunggulan').split('\n').map(s=>s.trim()).filter(Boolean).slice(0,5), biaya:v('biaya'), link:v('link'),
+    kegNama:v('kegNama'), kegTgl:$('kegTgl').value, kegWaktu:v('kegWaktu'), kegTempat:v('kegTempat'), kegDesk:v('kegDesk'), kegAjak:v('kegAjak'),
+    format:v('format'), gaya:v('gaya'), P:$('warnaUtama').value, A:$('warnaAksen').value, ov:+$('overlay').value/100
+  };
+}
+
+/* ---------- color + text helpers ---------- */
+function rgb(h){ h=h.replace('#',''); if(h.length===3) h=h.split('').map(c=>c+c).join(''); const n=parseInt(h,16); return [n>>16&255,n>>8&255,n&255]; }
+function lum(h){ const c=rgb(h).map(x=>{x/=255;return x<=.03928?x/12.92:Math.pow((x+.055)/1.055,2.4)}); return .2126*c[0]+.7152*c[1]+.0722*c[2]; }
+function mix(h,t,k){ const a=rgb(h), b=rgb(t); return 'rgb('+a.map((x,i)=>Math.round(x+(b[i]-x)*k)).join(',')+')'; }
+function rgba(h,a){ return 'rgba('+rgb(h).join(',')+','+a+')'; }
+const FD='"Bricolage Grotesque", "Trebuchet MS", sans-serif', FB='"Plus Jakarta Sans", "Segoe UI", sans-serif';
+const font = (w,size,disp) => `${w} ${Math.max(8,Math.round(size))}px ${disp?FD:FB}`;
+function spacing(px){ if('letterSpacing' in ctx) ctx.letterSpacing = px+'px'; }
+function wrap(text,maxW,maxLines){
+  const out=[];
+  for(const para of String(text).split('\n')){ let line='';
+    for(const w of para.split(/\s+/).filter(Boolean)){ const t=line?line+' '+w:w; if(!line||ctx.measureText(t).width<=maxW) line=t; else { out.push(line); line=w; } }
+    if(line) out.push(line); }
+  if(maxLines && out.length>maxLines){ const k=out.slice(0,maxLines); let last=k[maxLines-1];
+    while(last.length>1 && ctx.measureText(last+'…').width>maxW) last=last.slice(0,-1);
+    k[maxLines-1]=last.replace(/[\s,.;:]+$/,'')+'…'; return k; }
+  return out;
+}
+function rr(x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function initials(n){ const skip=/^(sd|smp|sma|smk|mi|mts|ma|tk|kb|sdit|smpit|smait|negeri|swasta|islam|terpadu|it|dan|&)$/i; const w=n.split(/\s+/).filter(x=>!skip.test(x)&&!/^\d+$/.test(x)); return (w.slice(0,2).map(x=>x[0]).join('')||n.slice(0,2)).toUpperCase(); }
+
+/* ---------- layout ---------- */
+function layout(d){
+  const [W,H]=FORMATS[d.format]; cv.width=W; cv.height=H;
+  const u=W/1080, pad=64*u, dark=d.gaya==='gelap';
+  const P=d.P, A=d.A, onA = lum(A)>.45 ? '#16201d' : '#ffffff';
+  const C = dark ? {head:'#ffffff', body:'rgba(255,255,255,.92)', label:'rgba(255,255,255,.72)', kick:A, val:'#ffffff', rule:'rgba(255,255,255,.25)'}
+                 : {head:mix(P,'#000000',.35), body:'#2c3532', label:'#6b7773', kick:P, val:mix(P,'#000000',.2), rule:'rgba(0,0,0,.12)'};
+
+  /* header */
+  const logoS=132*u, hx=pad+logoS+28*u, hw=W-pad-hx;
+  ctx.font=font(800,46*u,true); const nameLines=wrap(d.nama||'Nama Sekolah',hw,2);
+  const meta1=[d.npsn&&('NPSN '+d.npsn), d.akreditasi&&('Akreditasi '+d.akreditasi), d.status].filter(Boolean).join('  ·  ');
+  const meta2=[d.kec&&('Kec. '+d.kec), d.kab, d.prov].filter(Boolean).join(', ');
+  const textH = nameLines.length*50*u + (d.yayasan?34*u:0) + (meta1?34*u:0) + (meta2?32*u:0);
+  const headerH=Math.max(logoS,textH), headerBottom=pad+headerH;
+
+  /* footer */
+  const ig = d.ig ? (d.ig.startsWith('@')?d.ig:'@'+d.ig) : '';
+  const items=[d.wa&&('WA '+d.wa), d.telp&&('Telp '+d.telp), ig&&('IG '+ig), d.web, d.email].filter(Boolean);
+  ctx.font=font(700,30*u); const fLines=wrap(items.join('   •   '),W-2*pad,2);
+  const addr=[d.alamat, d.kel&&('Kel. '+d.kel), d.kec&&('Kec. '+d.kec), d.kab, d.kodepos].filter(Boolean).join(', ');
+  ctx.font=font(500,24*u); const aLines=addr?wrap(addr,W-2*pad,2):[];
+  const fpad=34*u, footerH = fpad*2 + fLines.length*40*u + (aLines.length? 10*u + aLines.length*32*u : 0);
+
+  /* content */
+  const inner = dark ? 0 : 48*u;
+  const cw = W - 2*pad - 2*inner;
+  const ppsb = d.tujuan==='ppsb';
+  const chipTxt = ppsb ? ({SPMB:'SPMB · Penerimaan Murid Baru', PPDB:'PPDB · Penerimaan Peserta Didik Baru', PPSB:'PPSB · Penerimaan Peserta Didik Baru'}[d.istilah]||'Penerimaan Murid Baru').toUpperCase() : 'AGENDA SEKOLAH';
+  const kick = ppsb ? [d.ta&&('Tahun Ajaran '+d.ta), d.gel].filter(Boolean).join('  ·  ') : fmtDate(d.kegTgl,false);
+  const head = ppsb ? (d.judul || ('Ayo Bergabung di '+(d.nama||'Sekolah Kami')+'!')) : (d.kegNama || 'Nama Kegiatan');
+  const listMax = d.format==='feed' ? 3 : 5;
+  const info = ppsb ? [ {l:'Pendaftaran', v:range(d.mulai,d.selesai)}, {l:'Jenjang', v:d.jenjang}, {l:'Biaya', v:d.biaya} ].filter(x=>x.v)
+                    : [ {l:'Tanggal', v:fmtDate(d.kegTgl,true)}, {l:'Waktu', v:d.kegWaktu}, {l:'Tempat', v:d.kegTempat} ].filter(x=>x.v);
+  const cta = ppsb ? (d.link ? 'Daftar di '+d.link : d.wa ? 'Info pendaftaran: WA '+d.wa : 'Daftar sekarang!') : (d.kegAjak || 'Terbuka untuk umum');
+
+  const contentTop = headerBottom + 48*u;
+  const contentBottom = H - footerH - 40*u;
+  const avail = contentBottom - contentTop - 2*inner;
+  let blocks, total, s;
+  const build = (s, listN) => {
+    const B=[]; const g=24*u*s;
+    // chip
+    ctx.font=font(800,24*u*s); spacing(2*u*s);
+    const cwid=Math.min(cw, ctx.measureText(chipTxt).width + 40*u*s), ch=48*u*s;
+    B.push({h:ch, draw:(x,y)=>{ ctx.fillStyle=A; rr(x,y,cwid,ch,ch/2); ctx.fill(); ctx.fillStyle=onA; ctx.font=font(800,24*u*s); spacing(2*u*s); ctx.textBaseline='middle'; ctx.fillText(chipTxt,x+20*u*s,y+ch/2+1); spacing(0); }});
+    spacing(0);
+    // kicker
+    if(kick){ ctx.font=font(700,32*u*s); const kl=wrap(kick,cw,2); B.push({h:kl.length*40*u*s, draw:(x,y)=>{ ctx.fillStyle=C.kick; ctx.font=font(700,32*u*s); ctx.textBaseline='top'; kl.forEach((t,i)=>ctx.fillText(t,x,y+i*40*u*s)); }}); }
+    // headline
+    const hs=(d.format==='feed'?84:96)*u*s; ctx.font=font(800,hs,true); const hl=wrap(head,cw,3);
+    B.push({h:hl.length*hs*1.04, draw:(x,y)=>{ ctx.fillStyle=C.head; ctx.font=font(800,hs,true); ctx.textBaseline='top'; hl.forEach((t,i)=>ctx.fillText(t,x,y+i*hs*1.04)); }});
+    // body
+    if(ppsb){
+      d.unggul.slice(0,listN).forEach(item => {
+        ctx.font=font(600,32*u*s); const r=17*u*s, tl=wrap(item,cw-2*r-18*u*s,2), lh=42*u*s;
+        B.push({h:tl.length*lh, draw:(x,y)=>{
+          ctx.fillStyle=A; ctx.beginPath(); ctx.arc(x+r,y+lh/2,r,0,Math.PI*2); ctx.fill();
+          ctx.strokeStyle=onA; ctx.lineWidth=4*u*s; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.beginPath();
+          ctx.moveTo(x+r*.55,y+lh/2+r*.05); ctx.lineTo(x+r*.9,y+lh/2+r*.4); ctx.lineTo(x+r*1.5,y+lh/2-r*.35); ctx.stroke();
+          ctx.fillStyle=C.body; ctx.font=font(600,32*u*s); ctx.textBaseline='middle'; tl.forEach((t,i)=>ctx.fillText(t,x+2*r+18*u*s,y+i*lh+lh/2)); }});
+      });
+    } else if(d.kegDesk){
+      ctx.font=font(500,32*u*s); const dl=wrap(d.kegDesk,cw,d.format==='feed'?3:5), lh=44*u*s;
+      B.push({h:dl.length*lh, draw:(x,y)=>{ ctx.fillStyle=C.body; ctx.font=font(500,32*u*s); ctx.textBaseline='top'; dl.forEach((t,i)=>ctx.fillText(t,x,y+i*lh)); }});
+    }
+    // info grid
+    if(info.length){
+      const n=info.length, gap=24*u*s, colW=(cw-gap*(n-1))/n;
+      ctx.font=font(800,32*u*s); const vals=info.map(it=>wrap(it.v,colW,2)); const lines=Math.max(...vals.map(x=>x.length));
+      const h=18*u*s + 30*u*s + lines*38*u*s;
+      B.push({h, draw:(x,y)=>{
+        ctx.fillStyle=C.rule; ctx.fillRect(x,y,cw,2*u);
+        info.forEach((it,i)=>{ const cx=x+i*(colW+gap);
+          ctx.fillStyle=C.label; ctx.font=font(700,21*u*s); spacing(2*u*s); ctx.textBaseline='top'; ctx.fillText(it.l.toUpperCase(),cx,y+18*u*s); spacing(0);
+          ctx.fillStyle=C.val; ctx.font=font(800,32*u*s); vals[i].forEach((t,j)=>ctx.fillText(t,cx,y+18*u*s+30*u*s+j*38*u*s)); });
+      }});
+    }
+    // CTA
+    ctx.font=font(800,32*u*s); const ctl=wrap(cta,cw-64*u*s,1)[0]; const bw=Math.min(cw,ctx.measureText(ctl).width+64*u*s), bh=74*u*s;
+    B.push({h:bh, cta:true, w:bw, draw:(x,y)=>{ ctx.fillStyle=A; rr(x,y,bw,bh,bh/2); ctx.fill(); ctx.fillStyle=onA; ctx.font=font(800,32*u*s); ctx.textBaseline='middle'; ctx.fillText(ctl,x+32*u*s,y+bh/2+1); }});
+    const tot=B.reduce((a,b)=>a+b.h,0)+g*(B.length-1);
+    return {B,tot,g};
+  };
+  let listN=listMax, res;
+  for(;;){
+    for(s=1; s>=0.58; s-=0.04){ res=build(s,listN); if(res.tot<=avail) break; }
+    if(res.tot<=avail || listN<=1 || !ppsb) break; listN--;
+  }
+  blocks=res.B; total=res.tot;
+  const cardH = total + 2*inner;
+  const cardY = contentBottom - cardH;
+  let y = cardY + inner;
+  blocks.forEach((b,i)=>{ b.y=y; b.x=pad+inner; y+=b.h+res.g; b.delay=0.9+i*0.28; });
+  return {W,H,u,pad,dark,P,A,onA,C,logoS,hx,nameLines,meta1,meta2,yay:d.yayasan,headerH,fLines,aLines,fpad,footerH,cardY,cardH,blocks,ov:d.ov,introEnd:0.9+blocks.length*0.28+0.7,nama:d.nama};
+}
+
+/* ---------- drawing ---------- */
+const ease = t => 1-Math.pow(1-t,3);
+const clamp = x => Math.max(0,Math.min(1,x));
+function drawBg(T){
+  const {W,H,u,P,A}=L;
+  ctx.save();
+  const z = 1.08 - 0.08*clamp(T/10);
+  ctx.translate(W/2,H/2); ctx.scale(z,z); ctx.translate(-W/2,-H/2);
+  if(bgImg){
+    const r=Math.max(W/bgImg.width,H/bgImg.height), w=bgImg.width*r, h=bgImg.height*r;
+    ctx.drawImage(bgImg,(W-w)/2,(H-h)/2,w,h);
+  } else {
+    const g=ctx.createLinearGradient(0,0,W,H); g.addColorStop(0,mix(P,'#ffffff',.08)); g.addColorStop(1,mix(P,'#000000',.45));
+    ctx.fillStyle=g; ctx.fillRect(-W*.1,-H*.1,W*1.2,H*1.2);
+    ctx.fillStyle=rgba(A,.16); ctx.beginPath(); ctx.arc(W*.92,H*.2,W*.42,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=rgba(A,.10); ctx.beginPath(); ctx.arc(W*.05,H*.62,W*.3,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.07)';
+    for(let yy=40*u; yy<H; yy+=46*u) for(let xx=40*u; xx<W; xx+=46*u){ ctx.beginPath(); ctx.arc(xx,yy,2.6*u,0,Math.PI*2); ctx.fill(); }
+  }
+  ctx.restore();
+  const k = bgImg ? L.ov : L.ov*0.45;
+  let g=ctx.createLinearGradient(0,0,0,L.pad+L.headerH+180*u); g.addColorStop(0,'rgba(0,0,0,'+(0.62*k)+')'); g.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,L.pad+L.headerH+180*u);
+  if(L.dark){ const top=L.cardY-260*u; g=ctx.createLinearGradient(0,top,0,H); g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(.35,'rgba(0,0,0,'+(0.7*k+0.1)+')'); g.addColorStop(1,'rgba(0,0,0,'+(0.85*k+0.1)+')'); ctx.fillStyle=g; ctx.fillRect(0,top,W,H-top); }
+}
+function drawHeader(){
+  const {u,pad,logoS,hx,P}=L;
+  const cx=pad+logoS/2, cy=pad+logoS/2, r=logoS/2;
+  ctx.save(); ctx.shadowColor='rgba(0,0,0,.25)'; ctx.shadowBlur=24*u; ctx.fillStyle='#ffffff'; ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill(); ctx.restore();
+  if(logoImg){
+    ctx.save(); ctx.beginPath(); ctx.arc(cx,cy,r-8*u,0,Math.PI*2); ctx.clip();
+    const box=(r-12*u)*2, s=Math.min(box/logoImg.width,box/logoImg.height), w=logoImg.width*s, h=logoImg.height*s;
+    ctx.drawImage(logoImg,cx-w/2,cy-h/2,w,h); ctx.restore();
+  } else {
+    ctx.fillStyle=P; ctx.font=font(800,52*u,true); ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(initials(L.nama||'Sekolah'),cx,cy+2*u); ctx.textAlign='left';
+  }
+  ctx.save(); ctx.shadowColor='rgba(0,0,0,.35)'; ctx.shadowBlur=12*u; ctx.fillStyle='#ffffff'; ctx.textBaseline='top';
+  let y=pad + Math.max(0,(logoS - (L.nameLines.length*50*u + (L.yay?34*u:0) + (L.meta1?34*u:0) + (L.meta2?32*u:0)))/2);
+  if(L.yay){ ctx.font=font(600,24*u); ctx.fillStyle='rgba(255,255,255,.85)'; ctx.fillText(L.yay,hx,y); y+=34*u; }
+  ctx.fillStyle='#ffffff'; ctx.font=font(800,46*u,true); L.nameLines.forEach(t=>{ ctx.fillText(t,hx,y); y+=50*u; });
+  ctx.fillStyle='rgba(255,255,255,.88)';
+  if(L.meta1){ ctx.font=font(600,24*u); ctx.fillText(L.meta1,hx,y+4*u); y+=34*u; }
+  if(L.meta2){ ctx.font=font(500,24*u); ctx.fillText(L.meta2,hx,y+2*u); }
+  ctx.restore();
+}
+function drawFooter(){
+  const {W,H,u,pad,P,A,footerH,fpad}=L, y0=H-footerH;
+  ctx.fillStyle=mix(P,'#000000',.25); ctx.fillRect(0,y0,W,footerH);
+  ctx.fillStyle=A; ctx.fillRect(0,y0,W,8*u);
+  ctx.textBaseline='top'; let y=y0+fpad;
+  ctx.fillStyle='#ffffff'; ctx.font=font(700,30*u); L.fLines.forEach(t=>{ ctx.fillText(t,pad,y); y+=40*u; });
+  if(L.aLines.length){ y+=10*u; ctx.fillStyle='rgba(255,255,255,.78)'; ctx.font=font(500,24*u); L.aLines.forEach(t=>{ ctx.fillText(t,pad,y); y+=32*u; }); }
+}
+function render(T){
+  if(!L) return;
+  const {W,H,u,pad}=L;
+  ctx.clearRect(0,0,W,H);
+  drawBg(T);
+  const fade=(delay)=>ease(clamp((T-delay)/0.7));
+  let a=fade(0); ctx.save(); ctx.globalAlpha=a; ctx.translate(0,(1-a)*-30*u); drawHeader(); ctx.restore();
+  a=fade(0.3); ctx.save(); ctx.globalAlpha=a; ctx.translate(0,(1-a)*40*u); drawFooter(); ctx.restore();
+  if(!L.dark){ a=fade(0.6); ctx.save(); ctx.globalAlpha=a; ctx.translate(0,(1-a)*50*u); ctx.shadowColor='rgba(0,0,0,.28)'; ctx.shadowBlur=40*u; ctx.shadowOffsetY=12*u; ctx.fillStyle='rgba(255,255,255,.96)'; rr(pad,L.cardY,W-2*pad,L.cardH,40*u); ctx.fill(); ctx.restore(); }
+  L.blocks.forEach(b=>{
+    a=fade(b.delay); if(a<=0) return;
+    ctx.save(); ctx.globalAlpha=a; ctx.translate((1-a)*-40*u,0);
+    if(b.cta && T>L.introEnd && T<50){ const p=1+0.035*Math.sin((T-L.introEnd)*5); ctx.translate(b.x+b.w/2,b.y+b.h/2); ctx.scale(p,p); ctx.translate(-(b.x+b.w/2),-(b.y+b.h/2)); }
+    b.draw(b.x,b.y); ctx.restore();
+  });
+}
+
+/* ---------- caption ---------- */
+function caption(d){
+  const tag = s => '#'+s.replace(/[^A-Za-z0-9]/g,'');
+  const kota = (d.kab||'').replace(/^(Kota|Kabupaten|Kab\.)\s*/i,'');
+  if(d.tujuan==='ppsb'){
+    const lines=[`${d.istilah} ${d.nama} Tahun Ajaran ${d.ta} resmi dibuka!`, ''];
+    if(d.judul) lines.push(d.judul+'.','');
+    if(d.unggul.length){ lines.push('Mengapa memilih kami?'); d.unggul.forEach(x=>lines.push('✔ '+x)); lines.push(''); }
+    const r=range(d.mulai,d.selesai); if(r) lines.push('Pendaftaran '+(d.gel?d.gel+': ':'')+r);
+    if(d.biaya) lines.push(d.biaya);
+    if(d.link) lines.push('Daftar: '+d.link);
+    if(d.wa) lines.push('Info: WA '+d.wa);
+    if(d.alamat) lines.push('Alamat: '+[d.alamat,d.kec&&('Kec. '+d.kec),d.kab].filter(Boolean).join(', '));
+    lines.push('', [tag(d.istilah+(d.ta||'').slice(0,4)), tag(d.istilah+kota), tag(d.jenjang.split('/')[0]+kota), tag(d.nama), '#SekolahPilihan'].filter(t=>t.length>1).join(' '));
+    return lines.join('\n');
+  }
+  const lines=[`Ayo hadir di ${d.kegNama}!`, ''];
+  if(d.kegDesk) lines.push(d.kegDesk,'');
+  if(d.kegTgl) lines.push('Tanggal: '+fmtDate(d.kegTgl,false));
+  if(d.kegWaktu) lines.push('Waktu: '+d.kegWaktu);
+  if(d.kegTempat) lines.push('Tempat: '+d.kegTempat+(d.nama?', '+d.nama:''));
+  if(d.kegAjak) lines.push('', d.kegAjak+'.');
+  if(d.wa) lines.push('Info: WA '+d.wa);
+  lines.push('', [tag(d.nama), tag('Kegiatan'+kota), '#AgendaSekolah', '#SekolahKita'].join(' '));
+  return lines.join('\n');
+}
+
+/* ---------- actions ---------- */
+function setMsg(t){ $('msg').textContent=t||''; }
+function setStatus(t){ $('status').textContent=t||''; }
+function setBusy(b){ ['playBtn','pngBtn','vidBtn','genBtn'].forEach(id=>$(id).disabled=b); }
+let fontsReady = (async()=>{ try{ await Promise.all([document.fonts.load('800 48px "Bricolage Grotesque"'), document.fonts.load('600 48px "Plus Jakarta Sans"'), document.fonts.load('800 48px "Plus Jakarta Sans"'), document.fonts.load('500 48px "Plus Jakarta Sans"'), document.fonts.load('700 48px "Plus Jakarta Sans"')]); }catch(_){} })();
+
+async function generate(e){
+  if(e) e.preventDefault();
+  if(anim) return;
+  const d=getData();
+  if(!d.nama){ setMsg('Isi nama sekolah terlebih dahulu.'); $('nama').focus(); return; }
+  if(d.tujuan==='kegiatan' && !d.kegNama){ setMsg('Isi nama kegiatan terlebih dahulu.'); $('kegNama').focus(); return; }
+  setMsg('');
+  await fontsReady;
+  L=layout(d);
+  const f=FORMATS[d.format];
+  $('dims').textContent=f[2];
+  $('stage').style.maxWidth = `min(100%, calc(72vh * ${(f[0]/f[1]).toFixed(4)}))`;
+  render(999);
+  $('caption').value=caption(d);
+  $('out').hidden=true; $('pngOut').hidden=true; $('vidOut').hidden=true;
+  setStatus('Flyer diperbarui. Putar animasi untuk melihat gerak dan musiknya.');
+}
+$('form').addEventListener('submit', generate);
+
+$('pngBtn').addEventListener('click', () => {
+  if(!L) return; render(999);
+  try{ $('pngOut').src=cv.toDataURL('image/png'); }catch(_){ setStatus('Gambar tidak bisa dibuat dari pratinjau ini.'); return; }
+  $('vidOut').hidden=true; $('pngOut').hidden=false; $('out').hidden=false;
+  $('saveNote').textContent='Untuk menyimpan: klik kanan pada gambar lalu pilih "Simpan gambar", atau tekan lama di HP.';
+  setStatus('Gambar PNG siap disimpan.');
+  $('out').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth', block:'nearest'});
+});
+
+function note(ac,out,f,t,len,type,g){ const o=ac.createOscillator(), v=ac.createGain(); o.type=type; o.frequency.value=f; v.gain.setValueAtTime(0.0001,t); v.gain.linearRampToValueAtTime(g,t+0.02); v.gain.exponentialRampToValueAtTime(0.0001,t+len); o.connect(v); v.connect(out); o.start(t); o.stop(t+len+0.05); }
+function synth(ac,out,dur){
+  const chords=[[60,64,67],[67,71,74],[69,72,76],[65,69,72]], beat=0.3, t0=ac.currentTime+0.05, hz=m=>440*Math.pow(2,(m-69)/12);
+  for(let i=0;i*beat<dur;i++){ const t=t0+i*beat, ch=chords[Math.floor(i/8)%4], n=ch[i%3]+((i%8)>=5?12:0);
+    note(ac,out,hz(n),t,beat*1.6,'triangle',0.08);
+    if(i%4===0) note(ac,out,hz(ch[0]-24),t,beat*3.8,'sine',0.16);
+    if(i%2===1) note(ac,out,2400,t,0.05,'square',0.012); }
+}
+async function startAudio(dur, withStream){
+  const src=$('audioSrc').value;
+  if(src==='none') return {stream:null, stop(){}};
+  const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return {stream:null, stop(){}};
+  const ac=new AC(); try{ await ac.resume(); }catch(_){}
+  const master=ac.createGain(); master.gain.value=0.9; master.connect(ac.destination);
+  let dest=null; if(withStream && ac.createMediaStreamDestination){ dest=ac.createMediaStreamDestination(); master.connect(dest); }
+  let el=null;
+  if(src==='upload' && audioURL){ el=new Audio(audioURL); const n=ac.createMediaElementSource(el); n.connect(master); try{ await el.play(); }catch(_){ setStatus('Musik tidak bisa diputar. Coba file mp3 lain.'); } }
+  else { if(src==='upload') setStatus('Belum ada file musik, memakai musik bawaan.'); synth(ac,master,dur); }
+  const t0=ac.currentTime; master.gain.setValueAtTime(0.9,t0+Math.max(0,dur-1.2)); master.gain.linearRampToValueAtTime(0.0001,t0+dur);
+  return {stream:dest&&dest.stream, stop(){ try{ el&&el.pause(); }catch(_){} setTimeout(()=>ac.close().catch(()=>{}),150); }};
+}
+function pickMime(){ if(!window.MediaRecorder) return null; return ['video/mp4;codecs=avc1,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].find(m=>MediaRecorder.isTypeSupported(m))||''; }
+
+async function play(record){
+  if(anim || !L) return;
+  const dur=+$('durasi').value||10;
+  let rec=null, chunks=[], mime='';
+  if(record){
+    mime=pickMime();
+    if(mime===null || !cv.captureStream){ setStatus('Peramban ini belum bisa merekam video. Coba Chrome atau Edge versi terbaru.'); return; }
+  }
+  setBusy(true);
+  const a=await startAudio(dur, record);
+  if(record){
+    const vs=cv.captureStream(30);
+    const ms=new MediaStream([...vs.getVideoTracks(), ...(a.stream?a.stream.getAudioTracks():[])]);
+    try{ rec=new MediaRecorder(ms, mime?{mimeType:mime, videoBitsPerSecond:8e6}:undefined); }catch(_){ rec=new MediaRecorder(ms); }
+    rec.ondataavailable=e=>{ if(e.data&&e.data.size) chunks.push(e.data); };
+    rec.onstop=()=>{
+      const type=rec.mimeType||mime||'video/webm', blob=new Blob(chunks,{type});
+      const vid=$('vidOut'); if(vid.src) URL.revokeObjectURL(vid.src); vid.src=URL.createObjectURL(blob);
+      $('pngOut').hidden=true; vid.hidden=false; $('out').hidden=false;
+      const ext=type.includes('mp4')?'MP4':'WebM';
+      $('saveNote').textContent=`Video ${ext}, ${dur} detik. Untuk menyimpan: klik kanan pada video lalu pilih "Simpan video", atau buka menu titik tiga di pemutar.`+(ext==='WebM'?' Jika WhatsApp/Instagram menolak WebM, ubah ke MP4 dengan konverter gratis.':'');
+      setStatus('Video selesai dibuat.');
+    };
+    rec.start(250);
+    setStatus('Merekam video… biarkan tab ini tetap terbuka.');
+  } else setStatus('Memutar animasi…');
+  const start=performance.now();
+  const step=now=>{
+    const T=(now-start)/1000; render(Math.min(T,dur));
+    if(T<dur){ anim=requestAnimationFrame(step); }
+    else { anim=null; a.stop(); if(rec&&rec.state!=='inactive') rec.stop(); else setStatus('Selesai diputar.'); setBusy(false); }
+  };
+  render(0);
+  anim=requestAnimationFrame(step);
+}
+$('playBtn').addEventListener('click', ()=>play(false));
+$('vidBtn').addEventListener('click', ()=>play(true));
+
+$('copyBtn').addEventListener('click', async () => {
+  const t=$('caption'); try{ await navigator.clipboard.writeText(t.value); $('copyBtn').textContent='Tersalin'; setTimeout(()=>$('copyBtn').textContent='Salin caption',1600); }
+  catch(_){ t.focus(); t.select(); $('copyBtn').textContent='Tekan Ctrl+C'; setTimeout(()=>$('copyBtn').textContent='Salin caption',2200); }
+});
+
+restore(); syncTujuan(); $('ovVal').textContent=$('overlay').value+'%'; $('audioWrap').hidden=$('audioSrc').value!=='upload';
+generate();
+})();
+</script>
+</body>
+</html>
